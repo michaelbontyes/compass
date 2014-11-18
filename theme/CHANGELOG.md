@@ -1,4 +1,4 @@
-# Changelog for Compass
+# Changelog for w_theme
 
 ## 1.0.0
 

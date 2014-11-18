@@ -2,7 +2,7 @@
 /**
  * A template part for displaying single link entries.
  *
- * @package     Compass
+ * @package     w_theme
  * @subpackage  HybridCore
  * @copyright   Copyright (c) 2014, Flagship, LLC
  * @license     GPL-2.0+

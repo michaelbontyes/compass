@@ -2,7 +2,7 @@
 /**
  * A template part for displaying an attachment within an archive.
  *
- * @package     Compass
+ * @package     w_theme
  * @subpackage  HybridCore
  * @copyright   Copyright (c) 2014, Flagship, LLC
  * @license     GPL-2.0+
@@ -21,7 +21,7 @@
 	// Display a featured image if we can find something to display.
 	get_the_image(
 		array(
-			'size'   => 'compass-full',
+			'size'   => 'w_theme-full',
 			'order'  => array( 'featured', 'attachment' ),
 			'before' => '<div class="featured-media">',
 			'after'  => '</div>',

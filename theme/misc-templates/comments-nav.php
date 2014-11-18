@@ -2,7 +2,7 @@
 /**
  * A template part to display comment pagination.
  *
- * @package     Compass
+ * @package     w_theme
  * @subpackage  HybridCore
  * @copyright   Copyright (c) 2014, Flagship, LLC
  * @license     GPL-2.0+
@@ -15,16 +15,16 @@
 
 	<nav class="comments-nav" role="navigation" aria-labelledby="comments-nav-title">
 
-		<h3 id="comments-nav-title" class="screen-reader-text"><?php _e( 'Comments Navigation', 'compass' ); ?></h3>
+		<h3 id="comments-nav-title" class="screen-reader-text"><?php _e( 'Comments Navigation', 'w_theme' ); ?></h3>
 
-		<?php previous_comments_link( _x( '&larr; Previous', 'comments navigation', 'compass' ) ); ?>
+		<?php previous_comments_link( _x( '&larr; Previous', 'comments navigation', 'w_theme' ) ); ?>
 
 		<span class="page-numbers"><?php
 			// Translators: Comments page numbers. 1 is current page and 2 is total pages.
-			printf( __( 'Page %1$s of %2$s', 'compass' ), get_query_var( 'cpage' ) ? absint( get_query_var( 'cpage' ) ) : 1, get_comment_pages_count() );
+			printf( __( 'Page %1$s of %2$s', 'w_theme' ), get_query_var( 'cpage' ) ? absint( get_query_var( 'cpage' ) ) : 1, get_comment_pages_count() );
 		?></span>
 
-		<?php next_comments_link( _x( 'Next &rarr;', 'comments navigation', 'compass' ) ); ?>
+		<?php next_comments_link( _x( 'Next &rarr;', 'comments navigation', 'w_theme' ) ); ?>
 
 	</nav><!-- .comments-nav -->
 

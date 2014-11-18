@@ -2,7 +2,7 @@
 /**
  * Header Right Sidebar Template
  *
- * @package     Compass
+ * @package     w_theme
  * @subpackage  HybridCore
  * @copyright   Copyright (c) 2014, Flagship, LLC
  * @license     GPL-2.0+
@@ -30,12 +30,12 @@ if ( ! is_active_sidebar( 'header-right' ) && current_user_can( 'edit_theme_opti
 	<div <?php hybrid_attr( 'header-right' ); ?>>
 
 		<p class="no-menu">
-			<?php _e( 'This is a widget area! It\'s perfect for a custom menu.', 'compass' ); ?>
+			<?php _e( 'This is a widget area! It\'s perfect for a custom menu.', 'w_theme' ); ?>
 
 			<?php
 			printf( '<a class="button" href="%s">%s</a>',
 				esc_url( admin_url( 'customize.php' ) ),
-				__( 'Customize Now', 'compass' )
+				__( 'Customize Now', 'w_theme' )
 			);
 			?>
 		</p>
