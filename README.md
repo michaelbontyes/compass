@@ -1,4 +1,4 @@
-# Flagship Compass
+# W-Theme - Based on Flagship Compass
 
 The most advanced WordPress Starter theme ever created.
 
