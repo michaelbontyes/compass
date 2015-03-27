@@ -3,117 +3,129 @@
  *
  * Includes all JS which is required within all sections of the theme.
  */
-
 window.compass = window.compass || {};
 
 (function( window, $, undefined ) {
 	'use strict';
 
-	var compass = window.compass;
+	var $window   = $( window ),
+		$document = $( document ),
+		$body     = $( 'body' ),
+		compass   = window.compass;
 
 	$.extend( compass, {
 
-		//* Skip Link Focus Fix
-		skipLinks: function() {
-			var eventMethod,
-				isWebkit = navigator.userAgent.toLowerCase().indexOf( 'webkit' ) > -1,
-				isOpera  = navigator.userAgent.toLowerCase().indexOf( 'opera' )  > -1,
-				isIe     = navigator.userAgent.toLowerCase().indexOf( 'msie' )   > -1;
-
-			if ( ( isWebkit || isOpera || isIe ) && 'undefined' !== typeof( document.getElementById ) ) {
-				eventMethod = ( window.addEventListener ) ? 'addEventListener' : 'attachEvent';
-				window[ eventMethod ]( 'hashchange', function() {
-					var element = document.getElementById( location.hash.substring( 1 ) );
-
-					if ( element ) {
-						if ( ! /^(?:a|select|input|button|textarea)$/i.test( element.tagName ) ) {
-							element.tabIndex = -1;
-						}
-
-						element.focus();
-					}
-				}, false );
-			}
+		//* Global script initialization
+		globalInit: function() {
+			var $videos = $( '#site-inner' );
+			$body.addClass( 'ontouchstart' in window || 'onmsgesturechange' in window ? 'touch' : 'no-touch' );
+			$document.gamajoAccessibleMenu();
+			$videos.fitVids();
 		},
 
-		//* Mobile Menu
-		mobileNav: function() {
+		mobileMenu: function() {
 			var menuSelectors = [],
-				menuSide      = 'right';
+				menuSide      = $body.hasClass( 'rtl' ) ? 'left' : 'right',
+				name          = 'sidr-main',
+				sidrOpen      = null,
+				sidrClose     = null,
+				siteContainer = $( '#site-container' ),
+				menuButton    = $( '<button type="button" id="responsive-menu-button" class="menu-button" aria-expanded="false"></button>' );
 
-			if ( $( '#menu-header' ).length ) {
-				menuSelectors.push( '#menu-header' );
+			if ( 0 !== $( '#menu-primary' ).length ) {
+				menuSelectors.push( '#menu-primary' );
 			}
 
-			if ( $( '#after-header' ).length ) {
-				menuSelectors.push( '#menu-after-header' );
+			if ( 0 !== $( '#menu-secondary' ).length ) {
+				menuSelectors.push( '#menu-secondary' );
 			}
 
 			//* End here if we don't have a menu.
-			if ( menuSelectors.length === 0 ) {
+			if ( 0 === menuSelectors.length ) {
 				return;
 			}
 
 			//* Add a responsive menu button.
-			$( '#branding' ).before( '<button id="responsive-menu-button" class="menu-button" role="button" aria-pressed="false"></button>' );
+			$( '#branding' ).before( menuButton );
 
-			//* Switch the menu side if a RTL langauge is in use.
-			if ( $( 'body' ).hasClass( 'rtl' ) ) {
-				menuSide = 'left';
-			}
+			sidrOpen = function() {
+				var navEl        = $( '#' + name ),
+					navItems     = $( '#' + name + ' a' ),
+					firstNavItem = navItems.first(),
+					lastNavItem  = navItems.last();
+
+				menuButton.toggleClass( 'activated' ).attr( 'aria-expanded', true );
+
+				siteContainer.on( 'click.CloseSidr', function( event ) {
+					$.sidr( 'close', name );
+					event.preventDefault();
+				});
+
+				// Add some attributes to the menu container.
+				navEl.attr({ role: 'navigation', tabindex: '0' }).focus();
+
+				// When focus is on the menu container.
+				navEl.on( 'keydown.sidrNav', function( event ) {
+					// If it's not the tab key then return.
+					if ( 9 !== event.keyCode ) {
+						return;
+					}
+					// When tabbing forwards and tabbing out of the last link.
+					if ( lastNavItem[0] === event.target && ! event.shiftKey ) {
+						menuButton.focus();
+						return false;
+					// When tabbing backwards and tabbing out of the first link OR the menu container.
+					} else if ( ( firstNavItem[0] === event.target || navEl[0] === event.target ) && event.shiftKey ) {
+						menuButton.focus();
+						return false;
+					}
+				});
+
+				// When focus is on the toggle button.
+				menuButton.on( 'keydown.sidrNav', function( event ) {
+					// If it's not the tab key then return.
+					if ( 9 !== event.keyCode ) {
+						return;
+					}
+					// when tabbing forwards
+					if ( menuButton[0] === event.target && ! event.shiftKey ) {
+						navEl.focus();
+						return false;
+					}
+				});
+			};
+
+			sidrClose = function() {
+				menuButton.toggleClass( 'activated' ).attr( 'aria-expanded', false );
+				siteContainer.off( 'click.CloseSidr' );
+				// Remove the toggle button keydown event.
+				menuButton.off( 'keydown.sidrNav' );
+			};
 
 			//* Sidr menu init.
-			$( '#responsive-menu-button' ).sidr({
-				name: 'sidr-main',
+			menuButton.sidr( {
+				name:     name,
 				renaming: false,
-				side: menuSide,
-				source: menuSelectors.toString(),
-				onOpen: function() {
-					$( '#responsive-menu-button' ).attr( 'aria-pressed', function() {
-						return 'true';
-					});
-					$( '#responsive-menu-button' ).toggleClass( 'activated' );
-					$( '.site-container' ).on( 'click.wpscCloseSidr', function() {
-						$.sidr( 'close', 'sidr-main' );
-						event.preventDefault();
-					});
-				},
-				onClose: function() {
-					$( '#responsive-menu-button' ).attr( 'aria-pressed', function() {
-						return 'false';
-					});
-					$( '#responsive-menu-button' ).toggleClass( 'activated' );
-					$( '.site-container' ).off( 'click.wpscCloseSidr' );
-				}
+				side:     menuSide,
+				source:   menuSelectors.toString(),
+				onOpen:   sidrOpen,
+				onClose:  sidrClose
 			});
 
 			//* Close sidr menu if open on larger screens
-			$( window ).resize(function() {
-				if( window.innerWidth > 1023 ) {
+			$window.resize(function() {
+				if ( window.innerWidth >= 1024 ) {
 					$.sidr('close', 'sidr-main');
-					$( '#responsive-menu-button' ).attr( 'aria-pressed', function() {
-						return 'false';
-					});
+					menuButton.attr( 'aria-expanded', false );
 				}
 			});
-		},
-
-		//* FitVids Init
-		loadFitVids: function() {
-			if ( $.fn.fitVids ) {
-				$( '#site-inner' ).fitVids();
-			}
 		}
 
 	});
 
 	// Document ready.
 	jQuery(function() {
-		compass.skipLinks();
-		compass.mobileNav();
-		compass.loadFitVids();
-		jQuery( document ).gamajoAccessibleMenu();
+		compass.globalInit();
+		compass.mobileMenu();
 	});
 })( this, jQuery );
-
-// jQuery(document).gamajoAccessibleMenu();
